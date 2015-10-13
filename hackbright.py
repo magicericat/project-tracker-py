@@ -46,12 +46,28 @@ def make_new_student(first_name, last_name, github):
 
 def get_project_by_title(title):
     """Given a project title, print information about the project."""
-    pass
 
+    QUERY = """
+        SELECT title, description
+        FROM Projects
+        WHERE title = :title
+        """
+    db_cursor = db.session.execute(QUERY, {'title': title})
+    row = db_cursor.fetchone()
+    print "Project: %s\nDescription: %s" % (row[0], row[1])
 
 def get_grade_by_github_title(github, title):
     """Print grade student received for a project."""
-    pass
+
+    QUERY = """
+        SELECT grade
+        FROM Grades
+        WHERE github = :student_github AND title = :title
+        """
+
+    db_cursor = db.session.execute(QUERY, {'github':student_github, 'title':title})
+    row = db_cursor.fetchone()
+    print "Github: %s received a "
 
 
 def assign_grade(github, title, grade):
@@ -80,6 +96,10 @@ def handle_input():
         elif command == "new_student":
             first_name, last_name, github = args   # unpack!
             make_new_student(first_name, last_name, github)
+
+        elif command == "project_description":
+            title = args[0]
+            get_project_by_title(title)
 
         else:
             if command != "quit":
